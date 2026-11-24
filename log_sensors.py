@@ -16,7 +16,7 @@ CONFIG_FILE = '/home/codar/python_web_app/config.json'
 def load_config():
     default_config = {
         "logging_enabled": {"ds18b20": True, "sht35": True, "system_stats": True, "emi300": True},
-        "emi300_settings": {"ip_address": "192.168.1.174", "username": "admin", "password": "Ensol0001"},
+        "emi300_settings": {"ip_address": "192.168.1.174", "username": "admin", "password": "CHANGE_ME"},
         "system_settings": {"db_filename": "sensors.db", "polling_interval_sec": 60, "cpu_measure_window_sec": 1.0}
     }
     try:
@@ -72,7 +72,9 @@ def get_system_stats(cpu_window):
         stats['ram_usage'] = psutil.virtual_memory().percent
         stats['disk_usage'] = psutil.disk_usage('/').percent
         with open('/proc/uptime', 'r') as f: stats['uptime_hours'] = round(float(f.readline().split()[0])/3600.0, 2)
-        stats['cpu_freq'] = round(psutil.cpu_freq().current, 2)
+#        stats['cpu_freq'] = round(psutil.cpu_freq().current, 2)
+        freq = psutil.cpu_freq()
+        stats['cpu_freq'] = round(freq.current, 2) if freq else None
         throttle_raw = subprocess.check_output(['vcgencmd', 'get_throttled']).decode('utf-8').strip()
         stats['throttle_code'] = int(throttle_raw.split('=')[1], 16) 
         return stats
@@ -80,6 +82,7 @@ def get_system_stats(cpu_window):
 
 def read_network_device(ip, user, password):
     url = f"https://{ip}/api/sdserver.php?element=homeall"
+    response = None
     try:
         # Using 'with' guarantees the connection is closed when the block finishes
         with requests.get(url, auth=(user, password), verify=False, timeout=10) as response:
@@ -137,7 +140,8 @@ def read_network_device(ip, user, password):
 #            print(f"EMI-300 Network Error: Received Status Code {response.status_code}")
     except Exception as e:
         print(f"Error reading network device: {e}")
-        print(f"EMI-300 Network Error: Received Status Code {response.status_code}")
+        if response is not None:
+            print(f"EMI-300 Network Error: Received Status Code {response.status_code}")
     return None
 
 def log_all_sensors():
