@@ -1,0 +1,18 @@
+{
+    "logging_enabled": {
+        "ds18b20": true,
+        "sht35": true,
+        "system_stats": true,
+        "emi300": true
+    },
+    "emi300_settings": {
+        "ip_address": "192.168.1.228",
+        "username": "admin",
+        "password": "YOUR_PASSWORD_HERE"
+    },
+    "system_settings": {
+        "db_filename": "sensors.db",
+        "polling_interval_sec": 60,
+        "cpu_measure_window_sec": 1.0
+    }
+}

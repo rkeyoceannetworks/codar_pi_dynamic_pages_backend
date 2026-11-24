@@ -1,0 +1,20 @@
+# Secrets
+config.json
+
+# Databases, backups, and virtual env
+sensors.db
+*.db-journal
+backups/
+venv/
+__pycache__/
+*.pyc
+
+# Logs and archives
+*.log
+*.gz
+backup_log.txt
+manual_log.txt
+zipcontentslog.txt
+
+# Old manual backups
+*_old*
